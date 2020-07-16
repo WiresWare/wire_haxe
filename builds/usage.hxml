@@ -1,0 +1,6 @@
+-cp src
+-cp lib
+-main Main
+-js bin/usage/html/js/main.js
+-D analyzer-optimize
+-debug

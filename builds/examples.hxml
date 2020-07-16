@@ -1,0 +1,14 @@
+-cp lib
+--each
+
+--js bin/targets/wire.js
+-D js-es=6
+--next
+
+--java bin/targets/
+-lib hxjava
+-D jvm
+
+-D analyzer-optimize
+-debug
+

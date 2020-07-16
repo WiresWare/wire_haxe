@@ -1,0 +1,12 @@
+{
+  "name": "wire",
+  "url" : "https://github.com/wire-toolkit/wire_haxe",
+  "license": "MIT",
+  "tags": ["state management", "communication layer", "data container layer"],
+  "description": "Wire - communication and data layers",
+  "version": "0.0.3",
+  "releasenote": "Initial Version",
+  "contributors": ["cores"],
+  "dependencies": {
+  }
+}

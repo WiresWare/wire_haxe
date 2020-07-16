@@ -1,0 +1,25 @@
+-cp lib
+Wire
+-debug
+-D analyzer-optimize
+--each
+
+-js bin/targets/wire.js
+-D js-es=6
+
+#--next
+#--java bin/targets/wire_java
+#-lib hxjava
+
+#--next
+#--cs bin/targets/wire_cs
+#-lib hxcs
+
+#--next
+#--hl bin/targets/wire.hl
+
+#--next
+#--cpp bin/targets/wire_cpp
+#-D static_link
+
+
