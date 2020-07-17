@@ -12,9 +12,9 @@ module.exports = function(grunt) {
 			usage: {
 				hxml: 'builds/usage.hxml'
 			},
-			targets: {
-				hxml: 'builds/targets.hxml'
-			}
+			// targets: {
+			// 	hxml: 'builds/targets.hxml'
+			// }
 		},
 		watch: {
 			hx: {
