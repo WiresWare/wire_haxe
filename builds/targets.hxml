@@ -7,9 +7,8 @@ Wire
 -js bin/targets/wire.js
 -D js-es=6
 
-#--next
-#--java bin/targets/wire_java
-#-lib hxjava
+--next
+--jvm bin/targets/wire.jar
 
 #--next
 #--cs bin/targets/wire_cs
