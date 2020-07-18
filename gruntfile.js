@@ -12,9 +12,9 @@ module.exports = function(grunt) {
 			usage: {
 				hxml: 'builds/usage.hxml'
 			},
-			targets: {
-				hxml: 'builds/targets.hxml'
-			}
+			// targets: {
+			// 	hxml: 'builds/targets.hxml'
+			// }
 		},
 		watch: {
 			hx: {
@@ -37,9 +37,12 @@ module.exports = function(grunt) {
 					reload: true
 				}
 			}
+		},
+		exec: {
+			run_reload_in_usage_web: 'reload -b -d ./bin/usage/web &'
 		}
 	});
 
 	// Default task(s).
-	grunt.registerTask('default', ['haxe', 'watch']);
+	grunt.registerTask('default', ['exec', 'haxe', 'watch']);
 };

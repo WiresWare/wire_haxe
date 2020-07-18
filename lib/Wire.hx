@@ -1,11 +1,19 @@
 package ;
 
+import Type.ValueType;
+
+import wire.WireMiddleware;
+import wire.WireConstant;
+import wire.WireData;
 import wire.WireListener;
+import wire.WireStore;
 import wire.WireLayer;
 
 class Wire {
     static private var _INDEX:Int = 0;
     static final _LAYER:WireLayer = new WireLayer();
+    static final _STORE:WireStore = new WireStore();
+    static final _MIDDLEWARES:Array<WireMiddleware> = new Array<WireMiddleware>();
 
     var _hash:Int;
     var _signal:String;
@@ -54,6 +62,7 @@ class Wire {
 
     static public function add(scope:Dynamic, signal:String, listener:WireListener, replies:Int = 0):Wire {
         var wire = new Wire(scope, signal, listener, replies);
+        for (m in _MIDDLEWARES) m.onAdd(wire);
         attach(wire);
         return wire;
     }
@@ -65,14 +74,56 @@ class Wire {
     }
 
     static public function send(signal:String, data:Dynamic = null):Bool {
+        for (m in _MIDDLEWARES) m.onSend(signal, data);
         return _LAYER.send(signal, data);
     }
 
     static public function purge(withMiddleware:Bool = false):Void {
         _LAYER.clear();
+        _STORE.clear();
+        if (withMiddleware) while(_MIDDLEWARES.length > 0)
+            _MIDDLEWARES.pop();
     }
 
     static public function remove(signal:String, scope:Dynamic = null, listener:WireListener = null):Bool {
-        return _LAYER.remove(signal, scope, listener);
+        var existed:Bool = _LAYER.remove(signal, scope, listener);
+        if (existed) {
+            for (m in _MIDDLEWARES) m.onRemove(signal, scope, listener);
+        }
+        return existed;
+    }
+
+    static public function middleware(value:WireMiddleware):Void {
+        if (_MIDDLEWARES.indexOf(value) < 0) {
+            _MIDDLEWARES.push(value);
+        } else {
+            throw WireConstant.ERROR__MIDDLEWARE_EXISTS + value;
+        }
+    }
+
+    static public function get(signal:String, scope:Dynamic, listener:WireListener):Array<Wire> {
+        var result = new Array<Wire>();
+        if (signal != null && scope == null && listener == null) {
+            result = result.concat(_LAYER.getBySignal(signal));
+        }
+        if (signal == null && scope != null && listener == null) {
+            result = result.concat(_LAYER.getByScope(scope));
+        }
+        if (signal == null && scope == null && listener != null) {
+            result = result.concat(_LAYER.getByListener(listener));
+        }
+        // TODO: Implement combined cases
+        return result;
+    }
+
+    static public function data(key:String, value:Dynamic = null):WireData {
+        var wireData = _STORE.get(key);
+        if (value != null) {
+            var prevValue = wireData.value;
+            var nextValue = Type.typeof(value) == ValueType.TFunction ? value(prevValue) : value;
+            for (m in _MIDDLEWARES) m.onData(key, prevValue, nextValue);
+            wireData.value = nextValue;
+        }
+        return wireData;
     }
 }

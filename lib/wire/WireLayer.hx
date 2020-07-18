@@ -95,4 +95,28 @@ class WireLayer {
 
         return noMoreSignals;
     }
+
+    public function getBySignal(signal:String):Array<Wire> {
+        return hasSignal(signal)
+            ? _hashesBySignal[signal].map((hash) -> _wireByHash.get(hash))
+            : new Array<Wire>();
+    }
+
+    public function getByScope(scope:Dynamic):Array<Wire> {
+        var result = new Array<Wire>();
+        for (hash in _wireByHash.keys()) {
+            var wire = _wireByHash.get(hash);
+            if (wire.scope == scope) result.push(wire);
+        }
+        return result;
+    }
+
+    public function getByListener(listener:WireListener):Array<Wire> {
+        var result = new Array<Wire>();
+        for (hash in _wireByHash.keys()) {
+            var wire = _wireByHash.get(hash);
+            if (wire.listener == listener) result.push(wire);
+        }
+        return result;
+    }
 }

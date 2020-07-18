@@ -4,8 +4,8 @@
   "license": "MIT",
   "tags": ["state management", "communication layer", "data container layer"],
   "description": "Wire - communication and data layers",
-  "version": "0.1.0",
-  "releasenote": "Working version of communication layer, no data container layer",
+  "version": "0.6.0",
+  "releasenote": "Data container layer, middleware, and usage update, complete match to Dart version",
   "contributors": ["cores"],
   "dependencies": {
   }
