@@ -12,9 +12,9 @@ module.exports = function(grunt) {
 			usage: {
 				hxml: 'builds/usage.hxml'
 			},
-			// targets: {
-			// 	hxml: 'builds/targets.hxml'
-			// }
+			targets: {
+				hxml: 'builds/targets.hxml'
+			}
 		},
 		watch: {
 			hx: {
@@ -39,10 +39,14 @@ module.exports = function(grunt) {
 			}
 		},
 		exec: {
-			run_reload_in_usage_web: 'reload -b -d ./bin/usage/web &'
+			run_reload_in_usage_web: '(echo >/dev/tcp/localhost/7770) &>/dev/null && echo "TCP port 7770 open" || reload -p 7770 -b -d ./bin/usage/web &'
 		}
 	});
 
 	// Default task(s).
-	grunt.registerTask('default', ['exec', 'haxe', 'watch']);
+	grunt.registerTask('default', [
+		'exec',
+		'haxe',
+		'watch'
+	]);
 };

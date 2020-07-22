@@ -9,6 +9,7 @@ import wire.WireListener;
 import wire.WireStore;
 import wire.WireLayer;
 
+@:expose
 class Wire {
     static private var _INDEX:Int = 0;
     static final _LAYER:WireLayer = new WireLayer();

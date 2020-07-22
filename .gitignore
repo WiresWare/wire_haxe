@@ -1,7 +1,6 @@
 /bin/targets/*
 /bin/examples/*
-/bin/usage/web/js/main.js
-/bin/usage/web/js/main.js.map
+/bin/usage/*
 /node_modules/
 /.idea/
 /package-lock.json

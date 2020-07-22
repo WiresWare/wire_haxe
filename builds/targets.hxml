@@ -4,11 +4,11 @@ Wire
 -D analyzer-optimize
 --each
 
--js bin/targets/wire.js
+-js bin/targets/js/wire.js
 -D js-es=6
 
 --next
---jvm bin/targets/wire.jar
+--jvm bin/targets/java/wire.jar
 
 #--next
 #--cs bin/targets/wire_cs
