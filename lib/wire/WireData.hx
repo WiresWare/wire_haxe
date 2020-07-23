@@ -1,5 +1,10 @@
 package wire;
 
+#if js
+@:expose('WireDataJS')
+#else
+@:expose
+#end
 class WireData {
     private var _onRemove:String->Void;
     private final _listeners:Array<WireDataListener>

@@ -46,6 +46,8 @@ export default {
 		alias({
 			entries: {
 				components: './components',
+				Wire: './Wire',
+				WireData: './WireData',
 			}
 		}),
 		babel({

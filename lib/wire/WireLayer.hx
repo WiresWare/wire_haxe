@@ -102,6 +102,10 @@ class WireLayer {
             : new Array<Wire>();
     }
 
+    public function getByHash(hash:Int):Wire {
+        return _wireByHash.exists(hash) ? _wireByHash.get(hash) : null;
+    }
+
     public function getByScope(scope:Dynamic):Array<Wire> {
         var result = new Array<Wire>();
         for (hash in _wireByHash.keys()) {

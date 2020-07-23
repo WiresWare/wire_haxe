@@ -42,11 +42,11 @@ class Main {
         Wire.middleware(new TestWireMiddleware());
 
         trace('\n=============== SUBSCRIBER and API EXAMPLE ===============');
-        Wire.add(SCOPE, SIGNAL_1, function(wire:Wire, data:Dynamic):Void {
+        Wire.add(SCOPE, SIGNAL_1, function(wireHash:Int, data:Dynamic):Void {
             trace('> SIGNAL 1 (subscriber 1) -> Hello: ' + data);
         });
 
-        var listener1:WireListener = function(wire:Wire, data:Dynamic) {
+        var listener1:WireListener = function(wireHash:Int, data:Dynamic) {
             trace('> SIGNAL 1 (subscriber 2) -> Hello: ' + data);
         };
 
@@ -61,7 +61,7 @@ class Main {
         ///
         /// REMOVE EXAMPLE ===========================================
         trace('\n=============== REMOVE EXAMPLE ===============');
-        var listener2:WireListener = function(wire:Wire, data:Dynamic) {
+        var listener2:WireListener = function(wireHash:Int, data:Dynamic) {
             trace('> Remove: SIGNAL (listener 2) -> data: ' + data);
         };
         var SCOPE_2 = new Scope();
@@ -71,7 +71,7 @@ class Main {
         /* 1 */ Wire.add(SCOPE, SIGNAL_3, listener2); // Will be removed
         /* 2 */ Wire.add(SCOPE, SIGNAL_4, listener2);
         /* 3 */ Wire.add(SCOPE_2, SIGNAL_3, listener2); // Will be removed
-        /* 4 */ Wire.add(SCOPE_2, SIGNAL_4, function(wire:Wire, data:Dynamic) { trace('> Remove: SIGNAL 2 -> data: ' + data); });
+        /* 4 */ Wire.add(SCOPE_2, SIGNAL_4, function(wireHash:Int, data:Dynamic) { trace('> Remove: SIGNAL 2 -> data: ' + data); });
 
         /* 1 */ Wire.remove(SIGNAL_3, null, listener2);
         /* 3 */ Wire.remove(SIGNAL_3, SCOPE_2);
@@ -84,7 +84,7 @@ class Main {
 
         /// ONCE EXAMPLE ===========================================
         trace('\n=============== ONCE EXAMPLE on WireListener ===============');
-        Wire.add(SCOPE, SIGNAL_ONCE, function(wire:Wire, data:Dynamic) {
+        Wire.add(SCOPE, SIGNAL_ONCE, function(wireHash:Int, data:Dynamic) {
             trace('> SIGNAL 1 (limit 1) -> Goodbye: ' + data);
         }, 1);
 
@@ -94,11 +94,11 @@ class Main {
         /// ONCE END ===============================================
         /// 2 REPLY ===============================================
         trace('\n=============== 2 REPLY on WireListener ===============');
-        Wire.add(SCOPE, SIGNAL_2, function(wire:Wire, data:Dynamic) {
+        Wire.add(SCOPE, SIGNAL_2, function(wireHash:Int, data:Dynamic) {
             trace('\t SIGNAL 2 -> I do: ' + data);
         });
 
-        Wire.add(SCOPE, SIGNAL_2, function(wire:Wire, data:Dynamic) {
+        Wire.add(SCOPE, SIGNAL_2, function(wireHash:Int, data:Dynamic) {
             trace('\t SIGNAL 2 (limit 2) -> I do: ' + data);
         }, 2);
 

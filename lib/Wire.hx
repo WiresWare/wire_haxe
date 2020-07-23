@@ -9,7 +9,11 @@ import wire.WireListener;
 import wire.WireStore;
 import wire.WireLayer;
 
+#if js
+@:expose('WireJS')
+#else
 @:expose
+#end
 class Wire {
     static private var _INDEX:Int = 0;
     static final _LAYER:WireLayer = new WireLayer();
@@ -44,7 +48,7 @@ class Wire {
     }
 
     public function transfer(data:Dynamic):Void {
-        _listener(this, data);
+        _listener(_hash, data);
     }
 
     public function clear() {
@@ -102,16 +106,19 @@ class Wire {
         }
     }
 
-    static public function get(signal:String, scope:Dynamic, listener:WireListener):Array<Wire> {
+    static public function get(signal:String, scope:Dynamic, listener:WireListener, hash:Int):Array<Wire> {
         var result = new Array<Wire>();
-        if (signal != null && scope == null && listener == null) {
+        if (signal != null && scope == null && listener == null && hash == null) {
             result = result.concat(_LAYER.getBySignal(signal));
         }
-        if (signal == null && scope != null && listener == null) {
+        if (signal == null && scope != null && listener == null && hash == null) {
             result = result.concat(_LAYER.getByScope(scope));
         }
-        if (signal == null && scope == null && listener != null) {
+        if (signal == null && scope == null && listener != null && hash == null) {
             result = result.concat(_LAYER.getByListener(listener));
+        }
+        if (signal == null && scope == null && listener == null && hash != null) {
+            result.push(_LAYER.getByHash(hash));
         }
         // TODO: Implement combined cases
         return result;

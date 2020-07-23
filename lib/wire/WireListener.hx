@@ -1,3 +1,3 @@
 package wire;
 
-typedef WireListener = (wire:Wire, data:Dynamic) -> Void;
+typedef WireListener = (wireHash:Int, data:Dynamic) -> Void;

@@ -25,12 +25,12 @@ module.exports = function(grunt) {
 					livereload: true
 				}
 			},
-			html: {
-				files: 'bin/**/*.html',
-				options: {
-					livereload: true
-				}
-			},
+			// html: {
+			// 	files: 'bin/**/*.html',
+			// 	options: {
+			// 		livereload: true
+			// 	}
+			// },
 			configGrunt: {
 				files: ['Gruntfile.js'],
 				options: {
