@@ -11,43 +11,44 @@ import alias from '@rollup/plugin-alias';
 
 // `npm run build` -> `production` is true
 // `npm run dev` -> `production` is false
-const production = !process.env.ROLLUP_WATCH
+const IS_PRODUCTION = !process.env.ROLLUP_WATCH
 const libraryPath = '../../../../bin/targets/js/'
+const sharedLibraryPath = '../../../../example/_shared/counter/out/web/'
 const outputPath = '../../../../bin/examples/counter/web/js/'
-const outputFolder = production ? 'out' : 'bin'
+const outputFolder = IS_PRODUCTION ? 'out' : 'bin'
 const finalFolder = outputPath + outputFolder
 
 export default {
 	input: __dirname + '/src/index.js',
 	output: {
 		dir: finalFolder,
-		format: 'iife', // immediately-invoked function expression — suitable for <script> tags
+		// format: 'iife', // immediately-invoked function expression — suitable for <script> tags
 		// format: 'es', // Keep the bundle as an ES module file, suitable for other bundlers and inclusion as a <script type=module> tag in modern browsers (alias: esm, module)
 		// format: 'esm', // { type: 'module' } is automatically added to attributes.script
 		// format: 'cjs', // CommonJS, suitable for Node and other bundlers (alias: commonjs)
-		// format: 'umd', // Universal Module Definition, works as amd, cjs and iife all in one
+		format: 'umd', // Universal Module Definition, works as amd, cjs and iife all in one
 		// name: 'counter-js-app', // Other scripts on the same page can use this variable name to access the exports of your bundle.
 		sourceMap: 'inline',
-		entryFileNames: production ? '[name].[hash].js' : '[name].js',
+		entryFileNames: IS_PRODUCTION ? '[name].[hash].js' : '[name].js',
 	},
 	watch: { include: __dirname + '/src/**' },
 	plugins: [
-		// inject({
+		inject({
 			// include: __dirname + '/src/wire.js',
-			// Wire: ['window', 'Wire'],
+			WireWrapper: ['wire_js_wrapper', 'Wire'],
 			// Wire: __dirname + '/src/wire.js',
-		// }),
+		}),
 		resolve({
 			customResolveOptions: {
-				moduleDirectory: libraryPath
+				moduleDirectory: sharedLibraryPath
 			}
 		}),
 		commonjs(),
 		alias({
 			entries: {
 				components: './components',
-				Wire: './Wire',
-				WireData: './WireData',
+				Wire: 'shared',
+				// WireData: './WireData',
 			}
 		}),
 		babel({
@@ -57,7 +58,7 @@ export default {
 		css({
 			extract: true,
 			use: ['less'],
-			minimize: production,
+			minimize: IS_PRODUCTION,
 			extensions: ['.less']
 		}), // https://www.npmjs.com/package/rollup-plugin-postcss
 		html({
@@ -76,6 +77,6 @@ export default {
 		execute([
 			'(echo >/dev/tcp/localhost/7771) &>/dev/null && echo "TCP port 7771 open" || reload -b -p 7771 -d ' + finalFolder + ' &'
 		]),
-		production && terser()
+		IS_PRODUCTION && terser()
 	]
 };

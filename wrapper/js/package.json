@@ -1,0 +1,11 @@
+{
+  "name": "wire_js_wrapper",
+  "version": "0.0.1",
+  "description": "wrapper for wire_haxe in java script",
+  "main": "wire.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Vladimir Cores (Minkin)",
+  "license": "Apache 2.0"
+}

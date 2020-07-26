@@ -20,105 +20,10 @@ HxOverrides.remove = function(a,obj) {
 HxOverrides.now = function() {
 	return Date.now();
 };
-var Scope = function() {
-};
-Scope.__name__ = true;
-Scope.prototype = {
-	__class__: Scope
-};
-var TestWireMiddleware = function() {
-};
-TestWireMiddleware.__name__ = true;
-TestWireMiddleware.prototype = {
-	onAdd: function(wire) {
-		console.log("src/Main.hx:14:","> TestWireMiddleware -> onAdd: Wire.signal = " + wire.get_signal());
-	}
-	,onData: function(key,prevValue,nextValue) {
-		console.log("src/Main.hx:18:","> TestWireMiddleware -> onData: key = " + key + " | " + Std.string(prevValue) + " | " + Std.string(nextValue));
-	}
-	,onRemove: function(signal,scope,listener) {
-		console.log("src/Main.hx:22:","> TestWireMiddleware -> onRemove: signal = " + signal + " | " + Std.string(scope) + " | " + Std.string(listener));
-	}
-	,onSend: function(signal,data) {
-		console.log("src/Main.hx:26:","> TestWireMiddleware -> onRemove: signal = " + signal + " | " + Std.string(data));
-	}
-	,__class__: TestWireMiddleware
-};
 var Main = function() { };
 Main.__name__ = true;
 Main.main = function() {
-	console.log("src/Main.hx:32:","Welcome Wire");
-	var SCOPE = new Scope();
-	Wire.middleware(new TestWireMiddleware());
-	console.log("src/Main.hx:44:","\n=============== SUBSCRIBER and API EXAMPLE ===============");
-	Wire.add(SCOPE,"SIGNAL_1",function(data,wid) {
-		console.log("src/Main.hx:46:","> SIGNAL 1 (subscriber 1) -> Hello: " + Std.string(data));
-	});
-	var listener1 = function(data,wid) {
-		console.log("src/Main.hx:50:","> SIGNAL 1 (subscriber 2) -> Hello: " + Std.string(data));
-	};
-	Wire.add(SCOPE,"SIGNAL_1",listener1);
-	Wire.send("SIGNAL_1","World");
-	Wire.send("SIGNAL_1","Haxe");
-	Wire.send("SIGNAL_1","Programming");
-	Wire.remove("SIGNAL_1");
-	console.log("src/Main.hx:63:","\n=============== REMOVE EXAMPLE ===============");
-	var listener2 = function(data,wid) {
-		console.log("src/Main.hx:65:","> Remove: SIGNAL (listener 2) -> data: " + Std.string(data));
-	};
-	var SCOPE_2 = new Scope();
-	Wire.add(SCOPE,"SIGNAL_3",listener2);
-	Wire.add(SCOPE,"SIGNAL_4",listener2);
-	Wire.add(SCOPE_2,"SIGNAL_3",listener2);
-	Wire.add(SCOPE_2,"SIGNAL_4",function(data,wid) {
-		console.log("src/Main.hx:74:","> Remove: SIGNAL 2 -> data: " + Std.string(data));
-	});
-	Wire.remove("SIGNAL_3",null,listener2);
-	Wire.remove("SIGNAL_3",SCOPE_2);
-	Wire.send("SIGNAL_3","SIGNAL_3");
-	Wire.send("SIGNAL_4","SIGNAL_4");
-	Wire.remove("SIGNAL_1",SCOPE);
-	Wire.remove("SIGNAL_2",SCOPE_2);
-	console.log("src/Main.hx:86:","\n=============== ONCE EXAMPLE on WireListener ===============");
-	Wire.add(SCOPE,"SIGNAL_1_ONCE",function(data,wid) {
-		console.log("src/Main.hx:88:","> SIGNAL 1 (limit 1) -> Goodbye: " + Std.string(data));
-	},1);
-	console.log("src/Main.hx:91:","\tNo ends: " + Std.string(Wire.send("SIGNAL_1_ONCE","World")));
-	console.log("src/Main.hx:92:","\tNo ends: " + Std.string(Wire.send("SIGNAL_1_ONCE","Haxe")));
-	console.log("src/Main.hx:93:","\tNo ends: " + Std.string(Wire.send("SIGNAL_1_ONCE","Programming")));
-	console.log("src/Main.hx:96:","\n=============== 2 REPLY on WireListener ===============");
-	Wire.add(SCOPE,"SIGNAL_2",function(data,wid) {
-		console.log("src/Main.hx:98:","\t SIGNAL 2 -> I do: " + Std.string(data));
-	});
-	Wire.add(SCOPE,"SIGNAL_2",function(data,wid) {
-		console.log("src/Main.hx:102:","\t SIGNAL 2 (limit 2) -> I do: " + Std.string(data));
-	},2);
-	console.log("src/Main.hx:105:","Sent -> is last: " + Std.string(Wire.send("SIGNAL_2","Code")));
-	console.log("src/Main.hx:106:","Sent -> is last: " + Std.string(Wire.send("SIGNAL_2","Gym")));
-	console.log("src/Main.hx:107:","Sent -> is last: " + Std.string(Wire.send("SIGNAL_2","Eat")));
-	console.log("src/Main.hx:108:","Sent -> is last: " + Std.string(Wire.send("SIGNAL_2","Sleep")));
-	console.log("src/Main.hx:109:","Sent -> is last: " + Std.string(Wire.send("SIGNAL_2","Repeat")));
-	console.log("src/Main.hx:113:","\n=============== DATA TESTS ===============");
-	var dataListener1 = function(data) {
-		console.log("src/Main.hx:116:","\t Listener 1 NEVER -> " + data);
-	};
-	Wire.data("SUPER_PARAM").subscribe(dataListener1);
-	console.log("src/Main.hx:119:","=============== Listener 1 subscibed: hasListener = " + Std.string(Wire.data("SUPER_PARAM").hasListener(dataListener1)));
-	Wire.data("SUPER_PARAM").unsubscribe(dataListener1);
-	console.log("src/Main.hx:121:","=============== Listener 1 unsubscibed: hasListener = " + Std.string(Wire.data("SUPER_PARAM").hasListener(dataListener1)));
-	var dataListener2 = function(data) {
-		console.log("src/Main.hx:124:","\t Listener ONCE AND UNSUBSCRIBE -> " + data);
-	};
-	Wire.data("SUPER_PARAM").subscribe(dataListener2);
-	Wire.data("SUPER_PARAM").subscribe(function(data) {
-		console.log("src/Main.hx:127:","\t Listener ALL CASES -> " + data);
-	});
-	console.log("src/Main.hx:129:","> Wire.data Listeners: where initial data = " + Std.string(Wire.data("SUPER_PARAM").get_value()));
-	Wire.data("SUPER_PARAM","Set VALUE to key1: " + "SUPER_PARAM");
-	Wire.data("SUPER_PARAM").unsubscribe(dataListener2);
-	Wire.data("SUPER_PARAM",function(value) {
-		return value + " | APPENDED from function call";
-	});
+	Main._controller = new controller_CounterController();
 };
 Math.__name__ = true;
 var Std = function() { };
@@ -210,9 +115,7 @@ wire_layer_WireCommunicateLayer.prototype = {
 			var _g = 0;
 			var _g1 = this._widsBySignal.h[signal];
 			while(_g < _g1.length) {
-				var wid = _g1[_g];
-				++_g;
-				var wire = this._wireByWID.h[wid];
+				var wire = this._wireByWID.h[_g1[_g++]];
 				var replies = wire.replies;
 				noMoreSubscribers = replies > 0 && --replies == 0;
 				if(noMoreSubscribers) {
@@ -222,11 +125,7 @@ wire_layer_WireCommunicateLayer.prototype = {
 				wire.transfer(data);
 			}
 			var _g = 0;
-			while(_g < WiresToRemove.length) {
-				var wire = WiresToRemove[_g];
-				++_g;
-				noMoreSubscribers = this._removeWire(wire);
-			}
+			while(_g < WiresToRemove.length) noMoreSubscribers = this._removeWire(WiresToRemove[_g++]);
 		}
 		return noMoreSubscribers;
 	}
@@ -237,9 +136,7 @@ wire_layer_WireCommunicateLayer.prototype = {
 			var _g = 0;
 			var _g1 = this._widsBySignal.h[signal];
 			while(_g < _g1.length) {
-				var wid = _g1[_g];
-				++_g;
-				var wire = this._wireByWID.h[wid];
+				var wire = this._wireByWID.h[_g1[_g++]];
 				var isWrongScope = scope != null && scope != wire.get_scope();
 				var isWrongListener = listener != null && listener != wire.get_listener();
 				if(isWrongScope || isWrongListener) {
@@ -248,11 +145,7 @@ wire_layer_WireCommunicateLayer.prototype = {
 				wiresToRemove.push(wire);
 			}
 			var _g = 0;
-			while(_g < wiresToRemove.length) {
-				var wire = wiresToRemove[_g];
-				++_g;
-				this._removeWire(wire);
-			}
+			while(_g < wiresToRemove.length) this._removeWire(wiresToRemove[_g++]);
 		}
 		return exists;
 	}
@@ -264,11 +157,7 @@ wire_layer_WireCommunicateLayer.prototype = {
 			wireToRemove.push(this._wireByWID.h[wid1]);
 		}
 		var _g = 0;
-		while(_g < wireToRemove.length) {
-			var wire = wireToRemove[_g];
-			++_g;
-			this._removeWire(wire);
-		}
+		while(_g < wireToRemove.length) this._removeWire(wireToRemove[_g++]);
 	}
 	,_removeWire: function(wire) {
 		var wid = wire.get_wid();
@@ -393,11 +282,7 @@ Wire.add = function(scope,signal,listener,replies) {
 	var wire = new Wire(scope,signal,listener,replies);
 	var _g = 0;
 	var _g1 = Wire._MIDDLEWARE_LIST;
-	while(_g < _g1.length) {
-		var m = _g1[_g];
-		++_g;
-		m.onAdd(wire);
-	}
+	while(_g < _g1.length) _g1[_g++].onAdd(wire);
 	Wire.attach(wire);
 	return wire;
 };
@@ -413,11 +298,7 @@ Wire.has = function(signal,wire) {
 Wire.send = function(signal,data) {
 	var _g = 0;
 	var _g1 = Wire._MIDDLEWARE_LIST;
-	while(_g < _g1.length) {
-		var m = _g1[_g];
-		++_g;
-		m.onSend(signal,data);
-	}
+	while(_g < _g1.length) _g1[_g++].onSend(signal,data);
 	return Wire._COMMUNICATION_LAYER.send(signal,data);
 };
 Wire.purge = function(withMiddleware) {
@@ -435,11 +316,7 @@ Wire.remove = function(signal,scope,listener) {
 	if(existed) {
 		var _g = 0;
 		var _g1 = Wire._MIDDLEWARE_LIST;
-		while(_g < _g1.length) {
-			var m = _g1[_g];
-			++_g;
-			m.onRemove(signal,scope,listener);
-		}
+		while(_g < _g1.length) _g1[_g++].onRemove(signal,scope,listener);
 	}
 	return existed;
 };
@@ -473,11 +350,7 @@ Wire.data = function(key,value) {
 		var nextValue = Type.typeof(value) == ValueType.TFunction ? value(prevValue) : value;
 		var _g = 0;
 		var _g1 = Wire._MIDDLEWARE_LIST;
-		while(_g < _g1.length) {
-			var m = _g1[_g];
-			++_g;
-			m.onData(key,prevValue,nextValue);
-		}
+		while(_g < _g1.length) _g1[_g++].onData(key,prevValue,nextValue);
 		wireData.set_value(nextValue);
 	}
 	return wireData;
@@ -504,6 +377,33 @@ Wire.prototype = {
 		this._listener = null;
 	}
 	,__class__: Wire
+};
+var const_CounterDataKey = function() { };
+const_CounterDataKey.__name__ = true;
+var const_CounterSignal = function() { };
+const_CounterSignal.__name__ = true;
+var controller_CounterController = function() {
+	Wire.add(this,const_CounterSignal.INCREASE,function(data,wid) {
+		console.log("src/controller/CounterController.hx:10:","> Processor: INCREASE -> handle: " + data);
+		Wire.data(const_CounterDataKey.COUNT,function(value) {
+			return value + 1;
+		});
+	});
+	Wire.add(this,const_CounterSignal.DECREASE,function(data,wid) {
+		console.log("src/controller/CounterController.hx:15:","> Processor: DECREASE -> handle: " + data);
+		Wire.data(const_CounterDataKey.COUNT,function(value) {
+			if(value > 0) {
+				return value - 1;
+			} else {
+				return 0;
+			}
+		});
+	});
+	console.log("src/controller/CounterController.hx:19:","Processor Ready");
+};
+controller_CounterController.__name__ = true;
+controller_CounterController.prototype = {
+	__class__: controller_CounterController
 };
 var haxe_Exception = function(message,previous,native) {
 	Error.call(this,message);
@@ -738,11 +638,7 @@ wire_WireData.prototype = {
 	,refresh: function() {
 		var _g = 0;
 		var _g1 = this._listeners;
-		while(_g < _g1.length) {
-			var listener = _g1[_g];
-			++_g;
-			listener(this._value);
-		}
+		while(_g < _g1.length) _g1[_g++](this._value);
 	}
 	,remove: function() {
 		this._onRemove(this._key);
@@ -779,9 +675,10 @@ Wire._INDEX = 0;
 Wire._COMMUNICATION_LAYER = new wire_layer_WireCommunicateLayer();
 Wire._DATA_CONTAINER_LAYER = new wire_layer_WireDataContainerLayer();
 Wire._MIDDLEWARE_LIST = [];
+const_CounterDataKey.COUNT = "DATA_KEY__COUNT";
+const_CounterSignal.INCREASE = "SIGNAL_INCREASE";
+const_CounterSignal.DECREASE = "SIGNAL_DECREASE";
 wire_WireConstant.ERROR__MIDDLEWARE_EXISTS = "Middleware already registered, middleware: ";
 wire_WireConstant.ERROR__WIRE_ALREADY_REGISTERED = "Wire already registered, wid: ";
 Main.main();
 })(typeof exports != "undefined" ? exports : typeof window != "undefined" ? window : typeof self != "undefined" ? self : this, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
-
-//# sourceMappingURL=index.js.map

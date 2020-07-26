@@ -1,5 +1,5 @@
 import { WireJS } from 'WireJS'
-import WireData from 'WireData'
+import WireData from 'WireDataJS'
 
 export default class Wire {
 	
@@ -34,7 +34,7 @@ export default class Wire {
 	static data(key, value = null) {
 		let originalWireData = WireJS.data(key, value)
 		if (originalWireData.wrapper == null)
-			return new WireData(originalWireData)
+			return new Wiredata(originalWireData)
 		return originalWireData.wrapper
 	}
 }

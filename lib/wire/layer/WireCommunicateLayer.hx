@@ -1,47 +1,47 @@
-package wire;
+package wire.layer;
 
 import wire.WireListener;
 
-class WireLayer {
+class WireCommunicateLayer {
 
-    private final _wireByHash:Map<Int, Wire> = new Map<Int, Wire>();
-    private final _hashesBySignal:Map<String, Array<Int>> = new Map<String, Array<Int>>();
+    private final _wireByWID:Map<Int, Wire> = new Map<Int, Wire>();
+    private final _widsBySignal:Map<String, Array<Int>> = new Map<String, Array<Int>>();
 
     public function new() {}
 
     public function add(wire:Wire):Wire {
-        var hash = wire.hash;
+        var wid = wire.wid;
         var signal = wire.signal;
 
-        if (_wireByHash.exists(hash)) {
-            throw WireConstant.ERROR__WIRE_ALREADY_REGISTERED + Std.string(hash);
+        if (_wireByWID.exists(wid)) {
+            throw WireConstant.ERROR__WIRE_ALREADY_REGISTERED + Std.string(wid);
         }
 
-        _wireByHash.set(hash, wire);
+        _wireByWID.set(wid, wire);
 
-        if (!_hashesBySignal.exists(signal)) {
-            _hashesBySignal[signal] = new Array<Int>();
+        if (!_widsBySignal.exists(signal)) {
+            _widsBySignal[signal] = new Array<Int>();
         }
 
-        _hashesBySignal[signal].push(hash);
+        _widsBySignal[signal].push(wid);
 
         return wire;
     }
 
     public function hasSignal(signal:String):Bool {
-        return _hashesBySignal.exists(signal);
+        return _widsBySignal.exists(signal);
     }
 
     public function hasWire(wire:Wire):Bool {
-        return _wireByHash.exists(wire.hash);
+        return _wireByWID.exists(wire.wid);
     }
 
     public function send(signal:String, data:Dynamic = null):Bool {
         var noMoreSubscribers = true;
         if (hasSignal(signal)) {
             var WiresToRemove = new Array<Wire>();
-            for (hash in _hashesBySignal[signal]) {
-                var wire:Wire = _wireByHash[hash];
+            for (wid in _widsBySignal[signal]) {
+                var wire:Wire = _wireByWID[wid];
                 var replies = wire.replies;
                 noMoreSubscribers = replies > 0 && --replies == 0;
                 if (noMoreSubscribers) WiresToRemove.push(wire);
@@ -57,8 +57,8 @@ class WireLayer {
         var exists = hasSignal(signal);
         if (exists) {
             var wiresToRemove = new Array<Wire>();
-            for (hash in _hashesBySignal[signal]) {
-                var wire = _wireByHash[hash];
+            for (wid in _widsBySignal[signal]) {
+                var wire = _wireByWID[wid];
                 var isWrongScope = scope != null && scope != wire.scope;
                 var isWrongListener = listener != null && listener != wire.listener;
                 if (isWrongScope || isWrongListener) return false;
@@ -71,25 +71,25 @@ class WireLayer {
 
     public function clear():Void {
         var wireToRemove = new Array<Wire>();
-        for (hash in _wireByHash.keys()) {
-            wireToRemove.push(_wireByHash.get(hash));
+        for (wid in _wireByWID.keys()) {
+            wireToRemove.push(_wireByWID.get(wid));
         }
         for (wire in wireToRemove) _removeWire(wire);
     }
 
     private function _removeWire(wire:Wire):Bool {
-        var hash = wire.hash;
+        var wid = wire.wid;
         var signal = wire.signal;
 
-        // Remove Wire by hash
-        _wireByHash.remove(hash);
+        // Remove Wire by wid
+        _wireByWID.remove(wid);
 
-        // Remove hash for Wire signal
-        var hashesForSignal:Array<Int> = _hashesBySignal[signal];
-        hashesForSignal.remove(hash);
+        // Remove wid for Wire signal
+        var widsForSignal:Array<Int> = _widsBySignal[signal];
+        widsForSignal.remove(wid);
 
-        var noMoreSignals = hashesForSignal.length == 0;
-        if (noMoreSignals) _hashesBySignal.remove(signal);
+        var noMoreSignals = widsForSignal.length == 0;
+        if (noMoreSignals) _widsBySignal.remove(signal);
 
         wire.clear();
 
@@ -98,18 +98,18 @@ class WireLayer {
 
     public function getBySignal(signal:String):Array<Wire> {
         return hasSignal(signal)
-            ? _hashesBySignal[signal].map((hash) -> _wireByHash.get(hash))
+            ? _widsBySignal[signal].map((wid) -> _wireByWID.get(wid))
             : new Array<Wire>();
     }
 
-    public function getByHash(hash:Int):Wire {
-        return _wireByHash.exists(hash) ? _wireByHash.get(hash) : null;
+    public function getByWID(wid:Int):Wire {
+        return _wireByWID.exists(wid) ? _wireByWID.get(wid) : null;
     }
 
     public function getByScope(scope:Dynamic):Array<Wire> {
         var result = new Array<Wire>();
-        for (hash in _wireByHash.keys()) {
-            var wire = _wireByHash.get(hash);
+        for (wid in _wireByWID.keys()) {
+            var wire = _wireByWID.get(wid);
             if (wire.scope == scope) result.push(wire);
         }
         return result;
@@ -117,8 +117,8 @@ class WireLayer {
 
     public function getByListener(listener:WireListener):Array<Wire> {
         var result = new Array<Wire>();
-        for (hash in _wireByHash.keys()) {
-            var wire = _wireByHash.get(hash);
+        for (wid in _wireByWID.keys()) {
+            var wire = _wireByWID.get(wid);
             if (wire.listener == listener) result.push(wire);
         }
         return result;

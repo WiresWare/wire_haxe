@@ -1,6 +1,10 @@
-package
+package ;
+
+import controller.CounterController;
+
 class Main {
+    private static var _controller:CounterController;
     static public function main() {
-        trace("Hello, world!");
+        _controller = new CounterController();
     }
 }

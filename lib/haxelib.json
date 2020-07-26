@@ -4,8 +4,8 @@
   "license": "MIT",
   "tags": ["state management", "communication layer", "data container layer"],
   "description": "Wire - communication and data layers",
-  "version": "0.6.0",
-  "releasenote": "Data container layer, middleware, and usage update, complete match to Dart version",
+  "version": "0.7.0",
+  "releasenote": "Parameters of WireListener was changed - data:Dynamic first and wid:Int second. Match to wire_dart 0.9.7",
   "contributors": ["cores"],
   "dependencies": {
   }

@@ -1,5 +1,6 @@
-package wire;
-class WireStore {
+package wire.layer;
+
+class WireDataContainerLayer {
     public function new() {}
 
     private final _map:Map<String, WireData> = new Map<String, WireData>();
